@@ -1,0 +1,2026 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Takip Temizle">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+<meta name="theme-color" content="#07080c">
+<title>Takip Temizle — Instagram Takip Yöneticisi</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%23f9ce34'/><stop offset='50%25' stop-color='%23ee2a7b'/><stop offset='100%25' stop-color='%236228d7'/></linearGradient></defs><rect width='24' height='24' rx='6' fill='url(%23g)'/><path d='M12 7a5 5 0 100 10 5 5 0 000-10zm0 8.2a3.2 3.2 0 110-6.4 3.2 3.2 0 010 6.4zm5.2-8.6a1.2 1.2 0 11-2.4 0 1.2 1.2 0 012.4 0z' fill='%23fff'/></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%23f9ce34'/><stop offset='50%25' stop-color='%23ee2a7b'/><stop offset='100%25' stop-color='%236228d7'/></linearGradient></defs><rect width='24' height='24' rx='6' fill='url(%23g)'/><path d='M12 7a5 5 0 100 10 5 5 0 000-10zm0 8.2a3.2 3.2 0 110-6.4 3.2 3.2 0 010 6.4zm5.2-8.6a1.2 1.2 0 11-2.4 0 1.2 1.2 0 012.4 0z' fill='%23fff'/></svg>">
+<script src="jszip.min.js"></script>
+<script>
+if (typeof JSZip === 'undefined') {
+  document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"><\/script>');
+}
+</script>
+<style>
+  /* =====================================================
+     RESET & ZERO HORIZONTAL OVERFLOW CONSTRAINTS
+     ===================================================== */
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  :root {
+    --bg: #07080c;
+    --card: rgba(255, 255, 255, 0.035);
+    --card-hover: rgba(255, 255, 255, 0.055);
+    --card-border: rgba(255, 255, 255, 0.08);
+    --card-border-focus: rgba(236, 72, 153, 0.45);
+    --ig-grad: linear-gradient(135deg, #f9ce34 0%, #ee2a7b 50%, #6228d7 100%);
+    --card-grad: linear-gradient(145deg, #1d1a24 0%, #12141c 55%, #0a0c12 100%);
+    --bar-grad: linear-gradient(90deg, #ec4899 0%, #f97316 100%);
+    --text: #ffffff;
+    --text-muted: #8e8e93;
+    --text-dim: #545458;
+    --red: #ff3b5c;
+    --red-bg: rgba(255, 59, 92, 0.12);
+    --green: #10b981;
+    --green-bg: rgba(16, 185, 129, 0.12);
+    --purple: #a855f7;
+    --purple-bg: rgba(168, 85, 247, 0.12);
+    --yellow: #facc15;
+    --yellow-bg: rgba(250, 204, 21, 0.12);
+    --blue: #38bdf8;
+    --blue-bg: rgba(56, 189, 248, 0.12);
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
+  }
+
+  html {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: clip;
+    overflow-x: hidden;
+    background-color: var(--bg);
+    color: var(--text);
+    -webkit-text-size-adjust: 100%;
+    font-size: 16px;
+  }
+
+  body {
+    width: 100%;
+    max-width: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Roboto, sans-serif;
+    overflow-x: clip;
+    overflow-x: hidden;
+    position: relative;
+    touch-action: pan-y;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Hide scrollbars cleanly */
+  ::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
+  * { scrollbar-width: none !important; -ms-overflow-style: none !important; }
+
+  /* =====================================================
+     APP SHELL CONTAINER
+     ===================================================== */
+  .app-shell {
+    width: 100%;
+    max-width: 680px;
+    margin: 0 auto;
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    padding-left: max(16px, var(--safe-left));
+    padding-right: max(16px, var(--safe-right));
+    padding-top: max(12px, var(--safe-top));
+    padding-bottom: calc(var(--safe-bottom) + 24px);
+    overflow-x: clip;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Subtle background radial ambient glow */
+  .app-shell::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(500px, 100%);
+    height: 280px;
+    background: radial-gradient(50% 50% at 50% 0%, rgba(238, 42, 123, 0.12) 0%, rgba(98, 40, 215, 0.04) 50%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* =====================================================
+     HEADER BAR
+     ===================================================== */
+  .app-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0 16px;
+    width: 100%;
+    position: relative;
+    z-index: 2;
+  }
+
+  .brand-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .brand-logo-mark {
+    width: 40px;
+    height: 40px;
+    border-radius: 13px;
+    background: var(--ig-grad);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 24px rgba(238, 42, 123, 0.3);
+    flex-shrink: 0;
+  }
+
+  .brand-logo-mark svg {
+    width: 20px;
+    height: 20px;
+    fill: #ffffff;
+  }
+
+  .brand-title-box h1 {
+    font-size: 15.5px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    line-height: 1.2;
+  }
+
+  .brand-title-box p {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+
+  .security-tag {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    border-radius: 100px;
+    border: 1px solid rgba(16, 185, 129, 0.28);
+    background: rgba(16, 185, 129, 0.08);
+    padding: 5px 11px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #34d399;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  /* =====================================================
+     HERO UPLOAD SCREEN (INITIAL)
+     ===================================================== */
+  #view-upload {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 0 36px;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-container {
+    width: 100%;
+    max-width: 480px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .sparkle-icon-wrap {
+    width: 72px;
+    height: 72px;
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.04);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 18px;
+    box-shadow: 0 12px 32px rgba(236, 72, 153, 0.15);
+  }
+
+  .sparkle-icon-wrap svg {
+    width: 32px;
+    height: 32px;
+    stroke: #f472b6;
+  }
+
+  .hero-tagline-pill {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.8px;
+    color: #f472b6;
+    margin-bottom: 10px;
+  }
+
+  .hero-main-title {
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: -0.7px;
+    line-height: 1.18;
+    margin-bottom: 12px;
+    word-break: break-word;
+  }
+
+  @media (min-width: 500px) {
+    .hero-main-title { font-size: 36px; }
+  }
+
+  .hero-main-sub {
+    font-size: 13.5px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    max-width: 380px;
+    margin: 0 auto 20px;
+  }
+
+  .feature-badges-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    margin-bottom: 24px;
+    max-width: 100%;
+  }
+
+  .f-badge {
+    padding: 4px 11px;
+    border-radius: 100px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
+    font-size: 11px;
+    font-weight: 500;
+    color: #a1a1aa;
+    white-space: nowrap;
+  }
+
+  /* Drop Upload Area */
+  .drop-box {
+    border: 1.5px dashed rgba(255, 255, 255, 0.16);
+    border-radius: 26px;
+    background: rgba(255, 255, 255, 0.02);
+    padding: 30px 18px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    width: 100%;
+    text-align: center;
+  }
+
+  .drop-box:hover, .drop-box.drag-over {
+    border-color: rgba(236, 72, 153, 0.5);
+    background: rgba(236, 72, 153, 0.04);
+    transform: scale(0.99);
+  }
+
+  .drop-symbol-circle {
+    width: 54px;
+    height: 54px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, rgba(236, 72, 153, 0.2) 0%, rgba(168, 85, 247, 0.2) 50%, rgba(249, 115, 22, 0.2) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 14px;
+    color: #f472b6;
+  }
+
+  .drop-box h3 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 5px;
+    letter-spacing: -0.2px;
+  }
+
+  .drop-box p {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    max-width: 320px;
+    margin: 0 auto 18px;
+    line-height: 1.4;
+  }
+
+  .action-btn-select {
+    background: #ffffff;
+    color: #000000;
+    font-size: 13.5px;
+    font-weight: 700;
+    padding: 12px 24px;
+    border-radius: 14px;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.12s ease, background 0.12s ease;
+  }
+
+  .action-btn-select:active {
+    background: #e4e4e7;
+    transform: scale(0.96);
+  }
+
+  .btn-sample-demo {
+    background: transparent;
+    border: none;
+    color: #a1a1aa;
+    font-size: 12.5px;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+    margin-top: 18px;
+    padding: 4px 8px;
+  }
+
+  .btn-sample-demo:hover {
+    color: #ffffff;
+  }
+
+  .security-footer-note {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 12px;
+    line-height: 1.4;
+    max-width: 340px;
+  }
+
+  /* =====================================================
+     ACTIVE LOADED APPLICATION SCREEN
+     ===================================================== */
+  #view-loaded {
+    display: none;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Top Section Banner (Matching new-chat) */
+  .section-banner-card {
+    border-radius: 24px;
+    border: 1px solid var(--card-border);
+    background: var(--card);
+    padding: 18px 18px 16px;
+    margin-bottom: 12px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .banner-top-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .banner-subtitle-kicker {
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+
+  .banner-main-heading {
+    font-size: 21px;
+    font-weight: 800;
+    letter-spacing: -0.4px;
+    line-height: 1.2;
+  }
+
+  .banner-description-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 3px;
+    line-height: 1.35;
+  }
+
+  .banner-icon-badge {
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+    background: rgba(236, 72, 153, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #f472b6;
+    flex-shrink: 0;
+  }
+
+  /* Progress Line */
+  .progress-wrap-line {
+    margin-top: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .progress-track {
+    flex: 1;
+    height: 6px;
+    border-radius: 100px;
+    background: rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+  }
+
+  .progress-fill-bar {
+    height: 100%;
+    width: 100%;
+    border-radius: 100px;
+    background: var(--bar-grad);
+    transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .progress-counter-text {
+    font-size: 11.5px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+
+  .progress-counter-text b {
+    color: #ffffff;
+    font-weight: 700;
+  }
+
+  /* Responsive 6-Tile Statistics Grid */
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-bottom: 12px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  @media (min-width: 520px) {
+    .metrics-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .metric-tile {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 11px 12px;
+    cursor: pointer;
+    transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .metric-tile:active {
+    transform: scale(0.97);
+  }
+
+  .metric-tile.active {
+    border-color: rgba(236, 72, 153, 0.45);
+    background: rgba(236, 72, 153, 0.07);
+    box-shadow: inset 0 0 16px rgba(236, 72, 153, 0.1);
+  }
+
+  .metric-tile-lbl {
+    font-size: 10.5px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .metric-tile-val {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+    line-height: 1;
+  }
+
+  /* Horizontal Category Scroller (Zero sideways body sway) */
+  .category-nav-scroll {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 2px 2px 8px;
+    margin-bottom: 10px;
+    width: 100%;
+    box-sizing: border-box;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y;
+    overscroll-behavior-x: contain;
+  }
+
+  .cat-nav-pill {
+    flex-shrink: 0;
+    padding: 7px 12px;
+    border-radius: 100px;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    color: var(--text-muted);
+    font-size: 11.5px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .cat-nav-pill:active {
+    transform: scale(0.95);
+  }
+
+  .cat-nav-pill.active {
+    background: #ffffff;
+    color: #000000;
+    border-color: #ffffff;
+    font-weight: 700;
+  }
+
+  .cat-pill-badge {
+    padding: 1px 6px;
+    border-radius: 100px;
+    background: rgba(255, 255, 255, 0.1);
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+  .cat-nav-pill.active .cat-pill-badge {
+    background: rgba(0, 0, 0, 0.14);
+    color: #000000;
+  }
+
+  /* Search & View Modes Control Bar */
+  .search-action-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .search-input-wrap {
+    position: relative;
+    flex: 1 1 0%;
+    min-width: 0;
+  }
+
+  .search-input-wrap svg {
+    position: absolute;
+    left: 13px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 15px;
+    height: 15px;
+    color: #71717a;
+    pointer-events: none;
+  }
+
+  .search-field {
+    width: 100%;
+    height: 42px;
+    border-radius: 14px;
+    border: 1px solid var(--card-border);
+    background: var(--card);
+    padding-left: 38px;
+    padding-right: 32px;
+    font-size: 13.5px;
+    color: #ffffff;
+    outline: none;
+    transition: border-color 0.15s ease;
+    box-sizing: border-box;
+  }
+
+  .search-field:focus {
+    border-color: var(--card-border-focus);
+  }
+
+  .search-clear-btn {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 13px;
+    cursor: pointer;
+    display: none;
+    padding: 4px;
+  }
+
+  .mode-switch-box {
+    display: flex;
+    border-radius: 14px;
+    border: 1px solid var(--card-border);
+    background: var(--card);
+    padding: 3px;
+    flex-shrink: 0;
+  }
+
+  .mode-pill-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.12s ease;
+  }
+
+  .mode-pill-btn.active {
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+  }
+
+  .copy-all-btn {
+    height: 42px;
+    padding: 0 12px;
+    border-radius: 14px;
+    border: 1px solid var(--card-border);
+    background: var(--card);
+    color: #a1a1aa;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+    transition: all 0.12s ease;
+    white-space: nowrap;
+  }
+
+  .copy-all-btn:active {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    transform: scale(0.96);
+  }
+
+  /* =====================================================
+     MODE 1: LIST VIEW CARDS (STRICT CONTAINMENT)
+     ===================================================== */
+  .list-items-wrap {
+    display: grid;
+    gap: 8px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .user-entry-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    border-radius: 16px;
+    border: 1px solid var(--card-border);
+    background: var(--card);
+    padding: 10px 12px;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+    transition: background 0.15s ease, transform 0.15s ease, opacity 0.15s ease;
+  }
+
+  .user-entry-card:hover {
+    background: var(--card-hover);
+  }
+
+  .user-identity-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    flex: 1 1 0%;
+    overflow: hidden;
+  }
+
+  .avatar-round-box {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3f3f46, #18181b);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #e4e4e7;
+    flex-shrink: 0;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .avatar-round-box img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .user-text-info {
+    min-width: 0;
+    flex: 1 1 0%;
+    overflow: hidden;
+  }
+
+  .username-line {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .username-link {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+    max-width: 100%;
+    display: block;
+    letter-spacing: -0.2px;
+  }
+
+  .username-link:hover {
+    text-decoration: underline;
+  }
+
+  .relationship-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 1.5px 6px;
+    border-radius: 6px;
+    font-size: 9.5px;
+    font-weight: 700;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .date-meta-line {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+
+  .user-right-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .btn-action-skip {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.12s ease;
+  }
+
+  .btn-action-skip:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+  }
+
+  .btn-action-skip:active {
+    transform: scale(0.92);
+  }
+
+  .btn-action-open {
+    height: 34px;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #000000;
+    padding: 0 11px;
+    font-size: 11px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    text-decoration: none;
+    flex-shrink: 0;
+    white-space: nowrap;
+    transition: all 0.12s ease;
+  }
+
+  .btn-action-open:active {
+    background: #e4e4e7;
+    transform: scale(0.95);
+  }
+
+  /* =====================================================
+     MODE 2: SWIPE DECK STACK VIEW (TINDER-STYLE)
+     ===================================================== */
+  .stack-deck-container {
+    width: 100%;
+    max-width: 360px;
+    margin: 6px auto 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .deck-viewport {
+    position: relative;
+    height: 410px;
+    width: 100%;
+    max-width: 340px;
+    margin: 0 auto;
+  }
+
+  .deck-card {
+    position: absolute;
+    inset: 0;
+    border-radius: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: var(--card-grad);
+    padding: 22px;
+    box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.8);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    will-change: transform, opacity;
+    overflow: hidden;
+  }
+
+  .deck-card:active {
+    cursor: grabbing;
+  }
+
+  /* Tinder-style visual stamps */
+  .deck-stamp {
+    position: absolute;
+    top: 24px;
+    padding: 6px 14px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.1s ease;
+    z-index: 10;
+  }
+
+  .deck-stamp.skip-stamp {
+    right: 20px;
+    color: #ff3b5c;
+    border: 3px solid #ff3b5c;
+    transform: rotate(12deg);
+    background: rgba(255, 59, 92, 0.1);
+  }
+
+  .deck-stamp.open-stamp {
+    left: 20px;
+    color: #10b981;
+    border: 3px solid #10b981;
+    transform: rotate(-12deg);
+    background: rgba(16, 185, 129, 0.1);
+  }
+
+  .deck-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .deck-status-pill {
+    padding: 4px 10px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .deck-center-body {
+    text-align: center;
+    margin: auto 0;
+  }
+
+  .deck-big-avatar {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ec4899, #fb923c);
+    box-shadow: 0 0 50px rgba(236, 72, 153, 0.32);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 18px;
+    color: #ffffff;
+    overflow: hidden;
+    position: relative;
+    border: 2px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .deck-big-avatar img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .deck-uname-title {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.4px;
+    margin-bottom: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+
+  .deck-date-sub {
+    font-size: 12.5px;
+    color: var(--text-muted);
+  }
+
+  .deck-bottom-hints {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--text-dim);
+    font-weight: 600;
+  }
+
+  .deck-button-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 14px;
+    width: 100%;
+  }
+
+  .deck-btn-skip {
+    height: 44px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.04);
+    color: #d4d4d8;
+    padding: 0 20px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.12s ease;
+  }
+
+  .deck-btn-skip:active {
+    background: rgba(255, 255, 255, 0.09);
+    transform: scale(0.95);
+  }
+
+  .deck-btn-open {
+    height: 44px;
+    border-radius: 14px;
+    border: none;
+    background: #ffffff;
+    color: #000000;
+    padding: 0 22px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.12s ease;
+  }
+
+  .deck-btn-open:active {
+    background: #e4e4e7;
+    transform: scale(0.95);
+  }
+
+  /* Empty State */
+  .empty-state-notice {
+    border: 1.5px dashed rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 44px 16px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 13px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* =====================================================
+     FLOATING UNDO TOAST NOTIFICATION
+     ===================================================== */
+  .floating-undo-toast {
+    position: fixed;
+    bottom: calc(var(--safe-bottom) + 20px);
+    left: 50%;
+    transform: translateX(-50%) translateY(25px);
+    background: #18181b;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 100px;
+    padding: 9px 16px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #ffffff;
+    display: none;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.75);
+    z-index: 40;
+    cursor: pointer;
+    white-space: nowrap;
+    opacity: 0;
+    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .floating-undo-toast.visible {
+    display: flex;
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* =====================================================
+     LOADING OVERLAY
+     ===================================================== */
+  #loading-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    background: rgba(7, 8, 12, 0.96);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .loading-ring {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-top-color: #ec4899;
+    animation: spinRing 0.85s linear infinite;
+    margin-bottom: 16px;
+  }
+
+  @keyframes spinRing {
+    to { transform: rotate(360deg); }
+  }
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+  <!-- Top App Header -->
+  <header class="app-header">
+    <div class="brand-group">
+      <div class="brand-logo-mark">
+        <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+      </div>
+      <div class="brand-title-box">
+        <h1>Takip Temizle</h1>
+        <p>Instagram takip yöneticisi</p>
+      </div>
+    </div>
+    <div class="security-tag">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <span>Sadece cihazında</span>
+    </div>
+  </header>
+
+  <!-- SCREEN 1: HERO UPLOAD VIEW -->
+  <section id="view-upload">
+    <div class="hero-container">
+      <div class="sparkle-icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+      </div>
+      <p class="hero-tagline-pill">Özel & Güvenli</p>
+      <h2 class="hero-main-title">Takip listen artık senin kontrolünde.</h2>
+      <p class="hero-main-sub">Instagram verilerini cihazında karşılaştır, seni takip etmeyenleri bul ve listenin kontrolünü geri al.</p>
+
+      <div class="feature-badges-row">
+        <span class="f-badge">Sıfır şifre</span>
+        <span class="f-badge">Tüm veri cihazında</span>
+        <span class="f-badge">Güvenli ayrıştırma</span>
+      </div>
+
+      <div class="drop-box" id="drop-zone-main">
+        <div class="drop-symbol-circle">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M12 12v9"/><path d="m16 16-4-4-4 4"/></svg>
+        </div>
+        <h3>Arşiv ZIP veya HTML/JSON yükle</h3>
+        <p>Instagram Ayarlar → Bilgilerini İndir adımlarından aldığın ZIP dosyasını seç.</p>
+        <button class="action-btn-select" onclick="document.getElementById('zip-file-input').click()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <span>Arşiv seç</span>
+        </button>
+        <input type="file" id="zip-file-input" accept=".zip,.html,.json" multiple style="display:none">
+      </div>
+
+      <button class="btn-sample-demo" onclick="loadSampleDemo()">Örnek verilerle dene</button>
+      <p class="security-footer-note">Parola gerekmez. Veriler hiçbir sunucuya yüklenmez, doğrudan tarayıcında karşılaştırılır.</p>
+    </div>
+  </section>
+
+  <!-- SCREEN 2: ACTIVE DATA VIEW -->
+  <section id="view-loaded">
+    
+    <!-- Top Banner Card (Takip Temizliği) -->
+    <div class="section-banner-card">
+      <div class="banner-top-row">
+        <div>
+          <p class="banner-subtitle-kicker">Takip Temizliği</p>
+          <h2 class="banner-main-heading" id="banner-cat-title">Geri takip etmeyenler</h2>
+          <p class="banner-description-sub" id="banner-cat-desc">Takip ettiklerin içinden seni takip etmeyenler.</p>
+        </div>
+        <div class="banner-icon-badge">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+      </div>
+      <div class="progress-wrap-line">
+        <div class="progress-track">
+          <div class="progress-fill-bar" id="category-progress-bar"></div>
+        </div>
+        <span class="progress-counter-text">Kalan: <b id="progress-val-current">0</b> / <span id="progress-val-total">0</span></span>
+      </div>
+    </div>
+
+    <!-- 6 Primary Metrics Tiles -->
+    <div class="metrics-grid">
+      <div class="metric-tile active" id="tile-notback" onclick="selectTabCategory('notback')">
+        <div class="metric-tile-lbl">❌ Takip etmeyen</div>
+        <div class="metric-tile-val" id="val-notback" style="color:var(--red)">0</div>
+      </div>
+      <div class="metric-tile" id="tile-onlyfollowers" onclick="selectTabCategory('onlyfollowers')">
+        <div class="metric-tile-lbl">👥 Senin etmediğin</div>
+        <div class="metric-tile-val" id="val-onlyfollowers" style="color:var(--purple)">0</div>
+      </div>
+      <div class="metric-tile" id="tile-mutual" onclick="selectTabCategory('mutual')">
+        <div class="metric-tile-lbl">✅ Karşılıklı takip</div>
+        <div class="metric-tile-val" id="val-mutual" style="color:var(--green)">0</div>
+      </div>
+      <div class="metric-tile" id="tile-followers" onclick="selectTabCategory('followers')">
+        <div class="metric-tile-lbl">👥 Toplam takipçi</div>
+        <div class="metric-tile-val" id="val-followers">0</div>
+      </div>
+      <div class="metric-tile" id="tile-following" onclick="selectTabCategory('following')">
+        <div class="metric-tile-lbl">➡️ Toplam takip</div>
+        <div class="metric-tile-val" id="val-following">0</div>
+      </div>
+      <div class="metric-tile" id="tile-pending" onclick="selectTabCategory('pending')">
+        <div class="metric-tile-lbl">⏳ Bekleyen istek</div>
+        <div class="metric-tile-val" id="val-pending" style="color:var(--yellow)">0</div>
+      </div>
+    </div>
+
+    <!-- Category Tabs Navigation (Horizontal Scroller) -->
+    <div class="category-nav-scroll" id="nav-pill-row"></div>
+
+    <!-- Search & View Mode Switcher -->
+    <div class="search-action-bar">
+      <div class="search-input-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" id="filter-search-box" class="search-field" placeholder="Kullanıcı ara..." autocomplete="off">
+        <button id="search-clear" class="search-clear-btn" onclick="clearSearch()">✕</button>
+      </div>
+      <div class="mode-switch-box">
+        <button class="mode-pill-btn active" id="btn-mode-list" onclick="setAppMode('list')" title="Liste Görünümü">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        </button>
+        <button class="mode-pill-btn" id="btn-mode-stack" onclick="setAppMode('stack')" title="Kart / Swipe Görünümü">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
+        </button>
+      </div>
+      <button class="copy-all-btn" onclick="copyCurrentViewUsernames()" title="Tüm kullanıcı adlarını kopyala">
+        <span>📋</span>
+      </button>
+    </div>
+
+    <!-- Mode 1: List View -->
+    <div id="container-mode-list">
+      <div class="list-items-wrap" id="user-cards-list"></div>
+    </div>
+
+    <!-- Mode 2: Swipe / Stack Deck View -->
+    <div id="container-mode-stack" style="display:none">
+      <div class="stack-deck-container">
+        <div class="deck-viewport" id="card-deck-viewport"></div>
+        <div class="deck-button-controls" id="deck-actions-bar" style="display:none">
+          <button class="deck-btn-skip" onclick="skipTopDeckCard()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            <span>Atla</span>
+          </button>
+          <button class="deck-btn-open" onclick="openAndSkipTopDeckCard()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+            <span>Profili aç</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </section>
+</div>
+
+<!-- Floating Undo Notification Toast -->
+<div class="floating-undo-toast" id="toast-undo" onclick="undoRemovalAction()">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#f472b6" stroke-width="2.5"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+  <span id="toast-undo-msg">@kullanici kaldırıldı</span>
+  <span>·</span>
+  <span style="color:#f472b6;font-weight:700">Geri al</span>
+</div>
+
+
+<!-- Loading Indicator Overlay -->
+<div id="loading-screen">
+  <div class="loading-ring"></div>
+  <h3 id="loading-title" style="font-size:16px;font-weight:700;margin-bottom:4px">Arşiv Okunuyor…</h3>
+  <p id="loading-desc" style="font-size:12px;color:#a1a1aa">Lütfen bekleyin</p>
+</div>
+
+<script>
+/* =====================================================
+   DATA & STATE MANAGEMENT
+   ===================================================== */
+let dataset = {
+  followers: [],
+  following: [],
+  pending: [],
+  recent_requests: [],
+  blocked: [],
+  unfollowed: [],
+  removed_suggestions: [],
+  restricted: [],
+  
+  // Computed Difference Groups
+  notback: [],
+  onlyfollowers: [],
+  mutual: []
+};
+
+// Initial counts for progress bar calculation
+let initialCategoryCounts = {};
+
+const CATEGORIES_CONFIG = [
+  { id: 'notback', label: '❌ Seni Takip Etmeyenler', title: 'Geri Takip Etmeyenler', desc: 'Takip ettiklerin içinden seni takip etmeyen profiller.' },
+  { id: 'onlyfollowers', label: '👥 Senin Takip Etmediklerin', title: 'Senin Takip Etmediklerin', desc: 'Seni takip eden fakat senin geri takip etmediğin profiller.' },
+  { id: 'mutual', label: '✅ Karşılıklı Takip', title: 'Karşılıklı Takip', desc: 'Her iki tarafın da birbirini takip ettiği profiller.' },
+  { id: 'pending', label: '⏳ Bekleyen İstekler', title: 'Bekleyen İstekler', desc: 'Gönderdiğin ve henüz onaylanmamış takip istekleri.' },
+  { id: 'followers', label: '👥 Tüm Takipçiler', title: 'Tüm Takipçiler', desc: 'Profilini takip eden tüm kullanıcıların listesi.' },
+  { id: 'following', label: '➡️ Tüm Takip Edilenler', title: 'Tüm Takip Edilenler', desc: 'Senin takip ettiğin tüm kullanıcıların listesi.' },
+  { id: 'recent_requests', label: '📩 Gelen İstekler', title: 'Gelen Takip İstekleri', desc: 'Sana yakın zamanda gelen takip istekleri.' },
+  { id: 'blocked', label: '🚫 Engellenenler', title: 'Engellenen Profiller', desc: 'Instagram üzerinde engellediğin hesaplar.' },
+  { id: 'unfollowed', label: '👋 Takipten Çıkanlar', title: 'Takipten Çıkanlar', desc: 'Yakın zamanda takipten çıkardığın profiller.' },
+  { id: 'removed_suggestions', label: '💡 Kaldırılan Öneriler', title: 'Kaldırılan Öneriler', desc: 'Önerilenler arasından gizlediğin hesaplar.' },
+  { id: 'restricted', label: '🔕 Kısıtlananlar', title: 'Kısıtlanan Profiller', desc: 'Kısıtlama uyguladığın kullanıcılar.' }
+];
+
+let activeTabId = 'notback';
+let displayMode = 'list'; // 'list' | 'stack'
+let activeFilterText = '';
+let recentlyRemovedItem = null;
+let toastTimeoutId = null;
+
+const DEMO_RECORDS = [
+  { username: 'mert.aydin', date: '12 May 2024' },
+  { username: 'selinwaves', date: '03 Nis 2024' },
+  { username: 'baris.kaya', date: '28 Mar 2024' },
+  { username: 'deniz.works', date: '19 Şub 2024' },
+  { username: 'zeynep.jpg', date: '07 Oca 2024' },
+  { username: 'emre.codes', date: '22 Ara 2023' },
+  { username: 'ayse.studio', date: '18 Kas 2023' }
+];
+
+/* =====================================================
+   ACCURATE HTML & JSON PARSING ENGINE
+   ===================================================== */
+function sanitizeUsername(raw) {
+  if (!raw) return '';
+  let str = raw.trim();
+  str = str.replace(/^https?:\/\/(?:www\.)?instagram\.com\/(?:_u\/)?/i, '');
+  str = str.split(/[?#/]/)[0].trim();
+  return str;
+}
+
+function parseUsersFromHtmlString(html) {
+  const usersList = [];
+  const registered = new Set();
+
+  // 1. Table rows: <td class="_a6_q">Kullanıcı adı</td>...<td class="_2piu _a6_r">username</td>
+  const tableMatcher = /<td[^>]*class=["'][^"']*_a6_q[^"']*["'][^>]*>\s*(?:Kullan[ıi]c[ıi]\s*ad[ıi]|Username|Nom d'utilisateur|Benutzername)\s*<\/td>\s*<td[^>]*class=["'][^"']*_a6_r[^"']*["'][^>]*>([\s\S]*?)<\/td>/gi;
+  let match;
+  while ((match = tableMatcher.exec(html)) !== null) {
+    const rawVal = match[1].replace(/<[^>]+>/g, '').trim();
+    const clean = sanitizeUsername(rawVal);
+    if (!clean || registered.has(clean.toLowerCase())) continue;
+
+    const afterWindow = html.slice(match.index + match[0].length, match.index + match[0].length + 450);
+    const dateTag = afterWindow.match(/<div[^>]*class=["'][^"']*(?:_a6-o|_3-94)[^"']*["'][^>]*>([\s\S]*?)<\/div>/i);
+    const dateStr = dateTag ? dateTag[1].replace(/<[^>]+>/g, '').trim() : '';
+
+    registered.add(clean.toLowerCase());
+    usersList.push({ username: clean, date: dateStr });
+  }
+  if (usersList.length > 0) return usersList;
+
+  // 2. H2 headers: <h2 class="...">username</h2>
+  const h2Matcher = /<h2[^>]*class=["'][^"']*(?:_a6-h|_2pim)[^"']*["'][^>]*>([\s\S]*?)<\/h2>/gi;
+  while ((match = h2Matcher.exec(html)) !== null) {
+    const rawVal = match[1].replace(/<[^>]+>/g, '').trim();
+    const clean = sanitizeUsername(rawVal);
+    if (!clean || registered.has(clean.toLowerCase()) || clean.startsWith('http')) continue;
+
+    const afterWindow = html.slice(match.index + match[0].length, match.index + match[0].length + 450);
+    const dateTag = afterWindow.match(/<div>([A-ZÇĞİÖŞÜa-zçğıöşü]+\s+\d{1,2},?\s+\d{4}[^<]*)<\/div>/i);
+    const dateStr = dateTag ? dateTag[1].trim() : '';
+
+    registered.add(clean.toLowerCase());
+    usersList.push({ username: clean, date: dateStr });
+  }
+  if (usersList.length > 0) return usersList;
+
+  // 3. Anchor links: <a href="https://instagram.com/user">user</a>
+  const anchorMatcher = /<a[^>]+href=["']([^"']*instagram\.com\/[^"']*)["'][^>]*>([\s\S]*?)<\/a>/gi;
+  while ((match = anchorMatcher.exec(html)) !== null) {
+    const href = match[1];
+    const text = match[2].replace(/<[^>]+>/g, '').trim();
+    const candidate = text && !text.startsWith('http') && !text.includes('instagram.com') ? text : href;
+    const clean = sanitizeUsername(candidate);
+    if (!clean || registered.has(clean.toLowerCase())) continue;
+
+    const afterWindow = html.slice(match.index + match[0].length, match.index + match[0].length + 300);
+    const dateTag = afterWindow.match(/<div>([A-ZÇĞİÖŞÜa-zçğıöşü]+\s+\d{1,2},?\s+\d{4}[^<]*)<\/div>/i);
+    const dateStr = dateTag ? dateTag[1].trim() : '';
+
+    registered.add(clean.toLowerCase());
+    usersList.push({ username: clean, date: dateStr });
+  }
+
+  return usersList;
+}
+
+function parseUsersFromJsonString(jsonStr) {
+  try {
+    const root = JSON.parse(jsonStr);
+    const users = [];
+    const seen = new Set();
+    function walkItem(item) {
+      if (!item) return;
+      let val = item.value || item.title || '';
+      let dateText = '';
+      if (item.string_list_data && item.string_list_data.length) {
+        const d = item.string_list_data[0];
+        val = d.value || val;
+        if (d.timestamp) dateText = new Date(d.timestamp * 1000).toLocaleDateString('tr-TR');
+      }
+      const u = sanitizeUsername(val);
+      if (u && !seen.has(u.toLowerCase())) {
+        seen.add(u.toLowerCase());
+        users.push({ username: u, date: dateText });
+      }
+    }
+    if (Array.isArray(root)) root.forEach(walkItem);
+    else if (root.relationships_following) root.relationships_following.forEach(walkItem);
+    else if (root.relationships_followers) root.relationships_followers.forEach(walkItem);
+    return users;
+  } catch {
+    return [];
+  }
+}
+
+/* =====================================================
+   ZIP PARSING PROCESSOR
+   ===================================================== */
+async function processArchiveFile(fileList) {
+  const loadBox = document.getElementById('loading-screen');
+  const loadTitle = document.getElementById('loading-title');
+  const loadDesc = document.getElementById('loading-desc');
+  loadBox.style.display = 'flex';
+
+  dataset = { followers:[], following:[], pending:[], recent_requests:[], blocked:[], unfollowed:[], removed_suggestions:[], restricted:[], notback:[], mutual:[], onlyfollowers:[] };
+
+  try {
+    for (const file of Array.from(fileList)) {
+      if (/\.zip$/i.test(file.name)) {
+        loadTitle.textContent = 'ZIP Arşivi Açılıyor…';
+        loadDesc.textContent = file.name;
+        const zip = await JSZip.loadAsync(file);
+
+        for (const [path, entry] of Object.entries(zip.files)) {
+          if (entry.dir || !/\.(html?|json)$/i.test(path)) continue;
+
+          const text = await entry.async('string');
+          const isJson = /\.json$/i.test(path);
+          const users = isJson ? parseUsersFromJsonString(text) : parseUsersFromHtmlString(text);
+          const lower = path.toLowerCase();
+
+          if (/followers?(?:[_-]\d+)?\.(html?|json)$/i.test(lower)) {
+            dataset.followers = dataset.followers.concat(users);
+          } else if (/following\.(html?|json)$/i.test(lower)) {
+            dataset.following = dataset.following.concat(users);
+          } else if (/pending_follow_requests/i.test(lower)) {
+            dataset.pending = dataset.pending.concat(users);
+          } else if (/recent_follow_requests/i.test(lower)) {
+            dataset.recent_requests = dataset.recent_requests.concat(users);
+          } else if (/blocked_profiles/i.test(lower)) {
+            dataset.blocked = dataset.blocked.concat(users);
+          } else if (/recently_unfollowed_profiles/i.test(lower)) {
+            dataset.unfollowed = dataset.unfollowed.concat(users);
+          } else if (/removed_suggestions/i.test(lower)) {
+            dataset.removed_suggestions = dataset.removed_suggestions.concat(users);
+          } else if (/restricted_profiles/i.test(lower)) {
+            dataset.restricted = dataset.restricted.concat(users);
+          }
+        }
+      }
+    }
+
+    loadTitle.textContent = 'Hesaplanıyor…';
+    loadDesc.textContent = 'İlişki farkları analiz ediliyor';
+    calculateRelationshipDifferences();
+
+    setTimeout(() => {
+      loadBox.style.display = 'none';
+      document.getElementById('view-upload').style.display = 'none';
+      document.getElementById('view-loaded').style.display = 'block';
+
+      recordInitialCounts();
+      renderAllMetrics();
+      renderCategoryPills();
+      selectTabCategory('notback');
+    }, 280);
+
+  } catch (err) {
+    loadBox.style.display = 'none';
+    alert('Hata: ' + err.message);
+    console.error(err);
+  }
+}
+
+function calculateRelationshipDifferences() {
+  const followersSet = new Set(dataset.followers.map(u => u.username.toLowerCase()));
+  const followingSet = new Set(dataset.following.map(u => u.username.toLowerCase()));
+
+  // 1. Seni Geri Takip Etmeyenler (Sen takip ediyorsun, o etmiyor)
+  dataset.notback = dataset.following.filter(u => !followersSet.has(u.username.toLowerCase()));
+
+  // 2. Karşılıklı Takip (Her iki taraf da takip ediyor)
+  dataset.mutual = dataset.following.filter(u => followersSet.has(u.username.toLowerCase()));
+
+  // 3. Senin Geri Takip Etmediğin Kişiler (O takip ediyor, sen etmiyorsun)
+  dataset.onlyfollowers = dataset.followers.filter(u => !followingSet.has(u.username.toLowerCase()));
+}
+
+function recordInitialCounts() {
+  CATEGORIES_CONFIG.forEach(c => {
+    initialCategoryCounts[c.id] = (dataset[c.id] || []).length;
+  });
+}
+
+/* =====================================================
+   RELATIONSHIP BADGE RESOLVER
+   ===================================================== */
+function resolveUserRelationship(username) {
+  const u = (username || '').toLowerCase();
+  const followerSet = new Set(dataset.followers.map(x => x.username.toLowerCase()));
+  const followingSet = new Set(dataset.following.map(x => x.username.toLowerCase()));
+  const pendingSet = new Set(dataset.pending.map(x => x.username.toLowerCase()));
+
+  const isFollower = followerSet.has(u);
+  const isFollowing = followingSet.has(u);
+  const isPending = pendingSet.has(u);
+
+  if (isFollowing && !isFollower) {
+    return { label: 'Seni takip etmiyor', color: '#ff3b5c', bg: 'rgba(255, 59, 92, 0.12)' };
+  } else if (!isFollowing && isFollower) {
+    return { label: 'Geri takip etmedin', color: '#a855f7', bg: 'rgba(168, 85, 247, 0.12)' };
+  } else if (isFollowing && isFollower) {
+    return { label: 'Karşılıklı takip', color: '#10b981', bg: 'rgba(16, 185, 129, 0.12)' };
+  } else if (isPending) {
+    return { label: 'İstek bekliyor', color: '#facc15', bg: 'rgba(250, 204, 21, 0.12)' };
+  }
+  return { label: '', color: '', bg: '' };
+}
+
+/* =====================================================
+   UI RENDERING & TABS
+   ===================================================== */
+function renderAllMetrics() {
+  document.getElementById('val-notback').textContent = dataset.notback.length;
+  document.getElementById('val-onlyfollowers').textContent = dataset.onlyfollowers.length;
+  document.getElementById('val-mutual').textContent = dataset.mutual.length;
+  document.getElementById('val-followers').textContent = dataset.followers.length;
+  document.getElementById('val-following').textContent = dataset.following.length;
+  document.getElementById('val-pending').textContent = dataset.pending.length;
+
+  updateBannerProgress();
+}
+
+function updateBannerProgress() {
+  const cat = CATEGORIES_CONFIG.find(c => c.id === activeTabId) || CATEGORIES_CONFIG[0];
+  document.getElementById('banner-cat-title').textContent = cat.title;
+  document.getElementById('banner-cat-desc').textContent = cat.desc;
+
+  const currentCount = (dataset[activeTabId] || []).length;
+  const initialCount = initialCategoryCounts[activeTabId] || currentCount || 1;
+  const totalCount = Math.max(initialCount, currentCount);
+
+  document.getElementById('progress-val-current').textContent = currentCount;
+  document.getElementById('progress-val-total').textContent = totalCount;
+
+  const pct = totalCount > 0 ? Math.min(100, Math.round((currentCount / totalCount) * 100)) : 0;
+  document.getElementById('category-progress-bar').style.width = pct + '%';
+}
+
+function renderCategoryPills() {
+  const container = document.getElementById('nav-pill-row');
+  container.innerHTML = '';
+
+  CATEGORIES_CONFIG.forEach(cat => {
+    const list = dataset[cat.id] || [];
+    const pill = document.createElement('button');
+    pill.className = 'cat-nav-pill' + (cat.id === activeTabId ? ' active' : '');
+    pill.id = 'pill-btn-' + cat.id;
+    pill.innerHTML = `<span>${cat.label}</span> <span class="cat-pill-badge">${list.length}</span>`;
+    pill.onclick = () => selectTabCategory(cat.id);
+    container.appendChild(pill);
+  });
+}
+
+function selectTabCategory(catId) {
+  activeTabId = catId;
+
+  // Active pill highlight
+  document.querySelectorAll('.cat-nav-pill').forEach(el => el.classList.remove('active'));
+  const activeBtn = document.getElementById('pill-btn-' + catId);
+  if (activeBtn) {
+    activeBtn.classList.add('active');
+    activeBtn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+  }
+
+  // Active metric tile highlight
+  document.querySelectorAll('.metric-tile').forEach(t => t.classList.remove('active'));
+  const tile = document.getElementById('tile-' + catId);
+  if (tile) tile.classList.add('active');
+
+  updateBannerProgress();
+  clearSearch();
+  renderCurrentCategoryView();
+}
+
+function getFilteredActiveList() {
+  let list = dataset[activeTabId] || [];
+  if (activeFilterText) {
+    const q = activeFilterText.toLowerCase();
+    list = list.filter(u => u.username.toLowerCase().includes(q));
+  }
+  return list;
+}
+
+function setAppMode(mode) {
+  displayMode = mode;
+  document.getElementById('btn-mode-list').classList.toggle('active', mode === 'list');
+  document.getElementById('btn-mode-stack').classList.toggle('active', mode === 'stack');
+
+  document.getElementById('container-mode-list').style.display = mode === 'list' ? 'block' : 'none';
+  document.getElementById('container-mode-stack').style.display = mode === 'stack' ? 'block' : 'none';
+
+  renderCurrentCategoryView();
+}
+
+function renderCurrentCategoryView() {
+  if (displayMode === 'list') {
+    renderListViewCards();
+  } else {
+    renderStackDeckCards();
+  }
+}
+
+/* =====================================================
+   LIST VIEW RENDERER (COMPLETELY CONTAINED)
+   ===================================================== */
+function renderListViewCards() {
+  const container = document.getElementById('user-cards-list');
+  container.innerHTML = '';
+  const list = getFilteredActiveList();
+
+  if (list.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state-notice">
+        ${activeFilterText ? `"${activeFilterText}" ile eşleşen profil bulunamadı.` : 'Bu kategoride listelenecek kullanıcı yok.'}
+      </div>`;
+    return;
+  }
+
+  const frag = document.createDocumentFragment();
+  list.forEach(person => {
+    const card = document.createElement('article');
+    card.className = 'user-entry-card';
+
+    const initials = person.username.slice(0, 2).toUpperCase();
+    const dateText = person.date ? `Takip: ${person.date}` : '';
+
+    card.innerHTML = `
+      <div class="user-identity-left">
+        <div class="avatar-round-box">
+          <span style="font-size:13px;font-weight:700">${initials}</span>
+          <img src="https://unavatar.io/instagram/${encodeURIComponent(person.username)}" 
+               alt="${person.username}" 
+               loading="lazy" 
+               onerror="this.style.display='none'">
+        </div>
+        <div class="user-text-info">
+          <div class="username-line">
+            <a class="username-link" href="https://www.instagram.com/${person.username}/" target="_blank" rel="noopener">@${person.username}</a>
+          </div>
+          ${dateText ? `<p class="date-meta-line">${dateText}</p>` : ''}
+        </div>
+      </div>
+      <div class="user-right-actions">
+        <button class="btn-action-skip" onclick="removeOrSkipUser('${person.username}')" title="Atla / Gizle">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+        <button class="btn-action-open" onclick="removeOrSkipUser('${person.username}', true)">
+          <span>Profili aç</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+      </div>
+    `;
+    frag.appendChild(card);
+  });
+
+  container.appendChild(frag);
+}
+
+/* =====================================================
+   STACK / SWIPE VIEW RENDERER (TINDER PHYSICS & STAMPS)
+   ===================================================== */
+let currentDragDeltaX = 0;
+
+function renderStackDeckCards() {
+  const viewport = document.getElementById('card-deck-viewport');
+  const actionsBar = document.getElementById('deck-actions-bar');
+  viewport.innerHTML = '';
+
+  const list = getFilteredActiveList();
+
+  if (list.length === 0) {
+    viewport.innerHTML = `
+      <div class="empty-state-notice" style="margin-top:60px">
+        Tüm kartlar tamamlandı.
+      </div>`;
+    actionsBar.style.display = 'none';
+    return;
+  }
+
+  actionsBar.style.display = 'flex';
+
+  const visibleSlice = list.slice(0, 3);
+
+  // Background stacked layers
+  for (let i = visibleSlice.length - 1; i >= 1; i--) {
+    const bgCard = document.createElement('div');
+    bgCard.style.cssText = `
+      position: absolute;
+      inset: 8px;
+      top: 10px;
+      height: 380px;
+      border-radius: 30px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: #12141c;
+      transform: translateY(${i * 10}px) scale(${1 - i * 0.035});
+      opacity: ${0.6 - i * 0.15};
+      pointer-events: none;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    `;
+    viewport.appendChild(bgCard);
+  }
+
+  // Active top card
+  const topPerson = visibleSlice[0];
+  const card = document.createElement('div');
+  card.className = 'deck-card';
+  card.id = 'active-drag-card';
+
+  const initials = topPerson.username.slice(0, 2).toUpperCase();
+  const dateTxt = topPerson.date ? `Takip başlama · ${topPerson.date}` : '';
+  const catObj = CATEGORIES_CONFIG.find(c => c.id === activeTabId);
+  const statusLabel = catObj ? catObj.title : 'Kullanıcı Kartı';
+
+  card.innerHTML = `
+    <div class="deck-stamp skip-stamp" id="stamp-skip">ATLA ✕</div>
+    <div class="deck-stamp open-stamp" id="stamp-open">AÇ & KALDIR ✓</div>
+    <div class="deck-top-row">
+      <span class="deck-status-pill" style="background:rgba(255, 255, 255, 0.06);color:#a1a1aa;border:1px solid rgba(255, 255, 255, 0.1)">${statusLabel}</span>
+      <span style="font-size:11px;color:var(--text-muted)">Kartı kaydır</span>
+    </div>
+    <div class="deck-center-body">
+      <div class="deck-big-avatar">
+        <span style="font-size:32px;font-weight:700">${initials}</span>
+        <img src="https://unavatar.io/instagram/${encodeURIComponent(topPerson.username)}" 
+             alt="${topPerson.username}" 
+             loading="lazy" 
+             onerror="this.style.display='none'">
+      </div>
+      <h2 class="deck-uname-title">@${topPerson.username}</h2>
+      <p class="deck-date-sub">${dateTxt}</p>
+    </div>
+    <div class="deck-bottom-hints">
+      <span>← Atla</span>
+      <span>Aç & kaldır →</span>
+    </div>
+  `;
+
+  bindSwipeEvents(card, topPerson);
+  viewport.appendChild(card);
+}
+
+function bindSwipeEvents(cardEl, person) {
+  let isDragging = false;
+  let startX = 0;
+  let startY = 0;
+
+  const stampSkip = cardEl.querySelector('#stamp-skip');
+  const stampOpen = cardEl.querySelector('#stamp-open');
+
+  const onStart = (e) => {
+    isDragging = true;
+    const pt = e.touches ? e.touches[0] : e;
+    startX = pt.clientX;
+    startY = pt.clientY;
+    currentDragDeltaX = 0;
+    cardEl.style.transition = 'none';
+  };
+
+  const onMove = (e) => {
+    if (!isDragging) return;
+    const pt = e.touches ? e.touches[0] : e;
+    const deltaX = pt.clientX - startX;
+    const deltaY = pt.clientY - startY;
+    currentDragDeltaX = deltaX;
+
+    const rot = deltaX * 0.055;
+    const opacity = 1 - Math.min(Math.abs(deltaX) / 320, 0.45);
+    cardEl.style.transform = `translate(${deltaX}px, ${deltaY * 0.25}px) rotate(${rot}deg)`;
+    cardEl.style.opacity = opacity;
+
+    // Visual stamps fade-in
+    if (deltaX < -15) {
+      if (stampSkip) stampSkip.style.opacity = Math.min(Math.abs(deltaX) / 75, 1);
+      if (stampOpen) stampOpen.style.opacity = 0;
+    } else if (deltaX > 15) {
+      if (stampOpen) stampOpen.style.opacity = Math.min(deltaX / 75, 1);
+      if (stampSkip) stampSkip.style.opacity = 0;
+    } else {
+      if (stampSkip) stampSkip.style.opacity = 0;
+      if (stampOpen) stampOpen.style.opacity = 0;
+    }
+  };
+
+  const onEnd = () => {
+    if (!isDragging) return;
+    isDragging = false;
+
+    if (Math.abs(currentDragDeltaX) > 80) {
+      const swipedRight = currentDragDeltaX > 0;
+      cardEl.style.transition = 'all 0.24s cubic-bezier(0.16, 1, 0.3, 1)';
+      cardEl.style.transform = `translateX(${swipedRight ? 420 : -420}px) rotate(${swipedRight ? 20 : -20}deg)`;
+      cardEl.style.opacity = '0';
+      setTimeout(() => {
+        removeOrSkipUser(person.username, swipedRight);
+      }, 190);
+    } else {
+      cardEl.style.transition = 'all 0.28s cubic-bezier(0.16, 1, 0.3, 1)';
+      cardEl.style.transform = 'translate(0px, 0px) rotate(0deg)';
+      cardEl.style.opacity = '1';
+      if (stampSkip) stampSkip.style.opacity = 0;
+      if (stampOpen) stampOpen.style.opacity = 0;
+    }
+  };
+
+  cardEl.addEventListener('mousedown', onStart);
+  window.addEventListener('mousemove', onMove);
+  window.addEventListener('mouseup', onEnd);
+
+  cardEl.addEventListener('touchstart', onStart, { passive: true });
+  window.addEventListener('touchmove', onMove, { passive: true });
+  window.addEventListener('touchend', onEnd);
+}
+
+function skipTopDeckCard() {
+  const list = getFilteredActiveList();
+  if (list.length > 0) removeOrSkipUser(list[0].username, false);
+}
+
+function openAndSkipTopDeckCard() {
+  const list = getFilteredActiveList();
+  if (list.length > 0) removeOrSkipUser(list[0].username, true);
+}
+
+/* =====================================================
+   USER REMOVAL & UNDO TOAST
+   ==================================================== */
+function removeOrSkipUser(username, openInApp = false) {
+  const list = dataset[activeTabId] || [];
+  const found = list.find(u => u.username === username);
+  if (!found) return;
+
+  recentlyRemovedItem = { ...found, category: activeTabId };
+  dataset[activeTabId] = list.filter(u => u.username !== username);
+
+  if (openInApp) {
+    window.location.href = `instagram://user?username=${username}`;
+    setTimeout(() => {
+      window.open(`https://www.instagram.com/${username}/`, '_blank');
+    }, 600);
+  }
+
+  // Show Undo Toast
+  const toast = document.getElementById('toast-undo');
+  document.getElementById('toast-undo-msg').textContent = `@${username} kaldırıldı`;
+  toast.classList.add('visible');
+
+  clearTimeout(toastTimeoutId);
+  toastTimeoutId = setTimeout(() => {
+    toast.classList.remove('visible');
+    recentlyRemovedItem = null;
+  }, 4500);
+
+  renderAllMetrics();
+  renderCategoryPills();
+  renderCurrentCategoryView();
+}
+
+function undoRemovalAction() {
+  if (!recentlyRemovedItem) return;
+  const cat = recentlyRemovedItem.category || activeTabId;
+  dataset[cat].unshift(recentlyRemovedItem);
+
+  document.getElementById('toast-undo').classList.remove('visible');
+  recentlyRemovedItem = null;
+  clearTimeout(toastTimeoutId);
+
+  renderAllMetrics();
+  renderCategoryPills();
+  renderCurrentCategoryView();
+}
+
+/* =====================================================
+   SEARCH & UTILITY CONTROLS
+   ===================================================== */
+let searchDebounceTimer;
+const searchBox = document.getElementById('filter-search-box');
+const searchClearBtn = document.getElementById('search-clear');
+
+searchBox.addEventListener('input', e => {
+  const val = e.target.value.trim();
+  searchClearBtn.style.display = val ? 'block' : 'none';
+  clearTimeout(searchDebounceTimer);
+  searchDebounceTimer = setTimeout(() => {
+    activeFilterText = val;
+    renderCurrentCategoryView();
+  }, 130);
+});
+
+function clearSearch() {
+  searchBox.value = '';
+  activeFilterText = '';
+  searchClearBtn.style.display = 'none';
+  renderCurrentCategoryView();
+}
+
+function copyCurrentViewUsernames() {
+  const list = getFilteredActiveList();
+  if (list.length === 0) return;
+  const text = list.map(u => '@' + u.username).join('\n');
+  navigator.clipboard.writeText(text).then(() => {
+    const toast = document.getElementById('toast-undo');
+    document.getElementById('toast-undo-msg').textContent = `✅ ${list.length} kullanıcı kopyalandı!`;
+    toast.classList.add('visible');
+    clearTimeout(toastTimeoutId);
+    toastTimeoutId = setTimeout(() => toast.classList.remove('visible'), 2000);
+  });
+}
+
+function loadSampleDemo() {
+  dataset.notback = [...DEMO_RECORDS];
+  dataset.following = [...DEMO_RECORDS];
+  dataset.followers = DEMO_RECORDS.filter((_, i) => i % 2 === 0);
+  dataset.onlyfollowers = [
+    { username: 'gamze.official', date: '28 Eyl 2024' },
+    { username: 'caner_99', date: '01 Eki 2024' }
+  ];
+  dataset.mutual = dataset.followers;
+  dataset.pending = [
+    { username: 'mehmet_kaya7', date: '04 Eki 2024' }
+  ];
+
+  document.getElementById('view-upload').style.display = 'none';
+  document.getElementById('view-loaded').style.display = 'block';
+
+  recordInitialCounts();
+  renderAllMetrics();
+  renderCategoryPills();
+  selectTabCategory('notback');
+}
+
+/* =====================================================
+   DRAG & DROP LISTENERS
+   ===================================================== */
+const dropZoneMain = document.getElementById('drop-zone-main');
+const zipFileInput = document.getElementById('zip-file-input');
+
+['dragenter', 'dragover'].forEach(name => {
+  dropZoneMain.addEventListener(name, e => {
+    e.preventDefault();
+    dropZoneMain.classList.add('drag-over');
+  });
+});
+
+['dragleave', 'drop'].forEach(name => {
+  dropZoneMain.addEventListener(name, e => {
+    e.preventDefault();
+    dropZoneMain.classList.remove('drag-over');
+  });
+});
+
+dropZoneMain.addEventListener('drop', e => {
+  const files = e.dataTransfer.files;
+  if (files && files.length) processArchiveFile(files);
+});
+
+zipFileInput.addEventListener('change', e => {
+  const files = e.target.files;
+  if (files && files.length) processArchiveFile(files);
+});
+</script>
+</body>
+</html>
